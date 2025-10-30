@@ -1,82 +1,79 @@
-// src/controllers/associados.controllers.js
+const servicoAssociados = require('../service/associados.services');
 
-// 💡 CORREÇÃO AQUI: Importa o Service com o nome correto: 'associados.services'
-const associadoService = require('../service/associados.services');
-
-// Função auxiliar para tratamento de erros
-const handleError = (res, error, defaultMessage, defaultStatus = 400) => {
-    const status = error.status || defaultStatus;
-    const message = error.message || defaultMessage;
-    res.status(status).json({ error: message });
+// Função auxiliar para tratamento e padronização de erros
+const tratarErro = (res, erro, mensagemPadrao, statusPadrao = 400) => {
+    const status = erro.status || statusPadrao;
+    const mensagem = erro.message || mensagemPadrao;
+    res.status(status).json({ erro: mensagem });
 };
 
 
-// --- Operações CRUD + Busca por CPF ---
+// --- Funções de Controle (Recebe req, Chama Service, Envia res) ---
 
-// [POST] /api/associados - Cria um novo associado
-const createAssociado = async (req, res) => {
+// [POST] /api/associados: Cria um novo associado
+const criarAssociado = async (req, res) => {
     try {
-        const novoAssociado = await associadoService.criarAssociado(req.body);
-        // Status 201: Created
+        const novoAssociado = await servicoAssociados.criarAssociado(req.body);
+        // 201 Created
         res.status(201).json(novoAssociado);
-    } catch (error) {
-        // Tratamento de exceção: erro de validação ou CPF duplicado (400)
-        handleError(res, error, 'Erro ao criar associado.');
+    } catch (erro) {
+        // 400 Bad Request (Validação/Duplicidade)
+        tratarErro(res, erro, 'Erro ao criar associado.');
     }
 };
 
-// [GET] /api/associados - Lista todos os associados
-const findAllAssociados = async (req, res) => {
+// [GET] /api/associados: Lista todos os associados
+const buscarTodosAssociados = async (req, res) => {
     try {
-        const associados = await associadoService.buscarTodosAssociados();
+        const associados = await servicoAssociados.buscarTodosAssociados();
         res.status(200).json(associados);
-    } catch (error) {
-        // Tratamento de exceção: erro no servidor ou na camada de dados (500)
-        handleError(res, error, 'Erro ao buscar associados.', 500);
+    } catch (erro) {
+        // 500 Internal Server Error (Erro de servidor/dados)
+        tratarErro(res, erro, 'Erro ao buscar associados.', 500);
     }
 };
 
-// [GET] /api/associados/cpf/:cpf - Busca um associado por CPF (Endpoint Adicional)
-const findByCpf = async (req, res) => {
+// [GET] /api/associados/:cpf ou /api/associados/cpf/:cpf: Busca por CPF
+const buscarPorCpf = async (req, res) => {
     try {
         const { cpf } = req.params;
-        const associado = await associadoService.buscarAssociadoPorCpf(cpf);
+        const associado = await servicoAssociados.buscarAssociadoPorCpf(cpf);
         res.status(200).json(associado);
-    } catch (error) {
-        // Tratamento de exceção: 404 Not Found (definido no Service) ou 400
-        handleError(res, error, 'Erro ao buscar associado por CPF.');
+    } catch (erro) {
+        // 404 Not Found (Se não encontrar) ou 400 (CPF inválido)
+        tratarErro(res, erro, 'Erro ao buscar associado por CPF.');
     }
 };
 
-// [PUT] /api/associados/:cpf - Atualiza um associado por CPF
-const updateAssociado = async (req, res) => {
+// [PUT] /api/associados/:cpf: Atualiza por CPF
+const atualizarAssociado = async (req, res) => {
     try {
         const { cpf } = req.params;
-        const associadoAtualizado = await associadoService.atualizarAssociado(cpf, req.body);
+        const associadoAtualizado = await servicoAssociados.atualizarAssociado(cpf, req.body);
         res.status(200).json(associadoAtualizado);
-    } catch (error) {
-        // Tratamento de exceção: 404 Not Found ou erro de validação (400)
-        handleError(res, error, 'Erro ao atualizar associado.');
+    } catch (erro) {
+        // 404 Not Found ou 400 (Validação)
+        tratarErro(res, erro, 'Erro ao atualizar associado.');
     }
 };
 
-// [DELETE] /api/associados/:cpf - Deleta um associado por CPF
-const deleteAssociado = async (req, res) => {
+// [DELETE] /api/associados/:cpf: Deleta por CPF
+const deletarAssociado = async (req, res) => {
     try {
         const { cpf } = req.params;
-        await associadoService.deletarAssociado(cpf);
-        // Status 204: No Content (sucesso sem corpo de resposta)
+        await servicoAssociados.deletarAssociado(cpf);
+        // 204 No Content
         res.status(204).send(); 
-    } catch (error) {
-        // Tratamento de exceção: 404 Not Found 
-        handleError(res, error, 'Erro ao deletar associado.');
+    } catch (erro) {
+        // 404 Not Found
+        tratarErro(res, erro, 'Erro ao deletar associado.');
     }
 };
 
 module.exports = {
-    createAssociado,
-    findAllAssociados,
-    findByCpf, // Endpoint adicional solicitado
-    updateAssociado,
-    deleteAssociado,
+    criarAssociado,
+    buscarTodosAssociados,
+    buscarPorCpf,
+    atualizarAssociado,
+    deletarAssociado,
 };

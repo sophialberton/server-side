@@ -1,13 +1,11 @@
-// server.js
+// Importa o arquivo app.js (onde toda a API está configurada)
+const app = require('./src/app');
 
-// 1. Importa o arquivo app.js (onde toda a API está configurada)
-const app = require('./src/app'); // ⬅️ Caminho correto: Procure dentro da pasta 'src'
+// Define a porta onde o servidor irá rodar (Porta de execução)
+const PORTA = 3000;
 
-// 2. Define a porta onde o servidor irá rodar
-const PORT = 3000; 
-
-// 3. Inicia o servidor usando a aplicação configurada
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-    console.log(`API pronta em: http://localhost:${PORT}/api`);
+// Inicia o servidor usando a aplicação configurada
+app.listen(PORTA, () => {
+    console.log(`Servidor rodando na porta ${PORTA}`);
+    console.log(`API pronta: http://localhost:${PORTA}/api`);
 });

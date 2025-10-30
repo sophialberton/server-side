@@ -1,21 +1,18 @@
-// src/app.js
-
 const express = require('express');
 const bodyParser = require('body-parser');
 
-// 💡 CORREÇÃO APLICADA AQUI: O nome do arquivo é associados.routes, no plural.
-const associadoRoutes = require('./routes/associados.routes'); 
+const rotasAssociados = require('./routes/associados.routes'); 
 
 const app = express();
 
-// Middleware para parsear JSON no corpo das requisições
+// Middleware: Permite que o Express leia JSON
 app.use(bodyParser.json());
 
-// Rota principal (Boas-Vindas)
+// Rota principal
 app.get('/', (req, res) => {
     res.status(200).send({
-        message: 'API CRUD de Associados está online!',
-        endpoints: [
+        mensagem: 'API CRUD de Associados está online!',
+        pontosDeAcesso: [
             '/api/associados (GET, POST, PUT, DELETE)',
             '/api/associados/cpf/:cpf (GET - Busca por CPF)',
             '/api/associados/:cpf (GET, PUT, DELETE)'
@@ -23,13 +20,13 @@ app.get('/', (req, res) => {
     });
 });
 
-// Adiciona as rotas de associados no prefixo /api
-app.use('/api', associadoRoutes);
+// Adiciona as rotas no prefixo /api
+app.use('/api', rotasAssociados);
 
-// Middleware de tratamento de erro genérico (boa prática)
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send({ message: 'Algo deu errado no servidor!' });
+// Middleware de tratamento de erro genérico
+app.use((erro, req, res, next) => {
+    console.error(erro.stack);
+    res.status(500).send({ mensagem: 'Erro interno do servidor.' });
 });
 
 module.exports = app;

@@ -1,74 +1,72 @@
-// src/data/associado.data.js
-
-// Simulação de "Banco de Dados" em memória
-const associadosDB = [];
+// Simulação de "Banco de Dados" (BD) em memória
+const associadosBD = [];
 
 /**
- * Simula uma operação de I/O assíncrona
- * @param {function} operation A operação a ser executada
- * @returns {Promise<any>} O resultado da operação
+ * Simula uma operação de I/O assíncrona.
+ * @param {function} operacao A função a ser executada.
+ * @returns {Promise<any>} O resultado da operação.
  */
-const simulateAsyncOperation = (operation) => {
-  return new Promise((resolve, reject) => {
-    // Simula um delay de rede/banco
+const simularOperacaoAssincrona = (operacao) => {
+  return new Promise((resolver, rejeitar) => {
+    // Simula delay de rede/BD
     setTimeout(() => {
       try {
-        const result = operation();
-        resolve(result);
-      } catch (error) {
-        reject(error);
+        const resultado = operacao();
+        resolver(resultado);
+      } catch (erro) {
+        rejeitar(erro);
       }
     }, 100); 
   });
 };
 
-// --- Funções CRUD e de Busca ---
+// --- Funções de Acesso a Dados ---
 
 // Cria um novo associado
-const create = (associado) => simulateAsyncOperation(() => {
-  const exists = associadosDB.some(a => a.cpf_associado === associado.cpf_associado);
-  if (exists) {
+const criar = (associado) => simularOperacaoAssincrona(() => {
+  const existe = associadosBD.some(a => a.cpf_associado === associado.cpf_associado);
+  if (existe) {
     throw new Error('Associado com este CPF já existe.');
   }
-  associadosDB.push(associado);
+  associadosBD.push(associado);
   return associado;
 });
 
-// Lista todos os associados
-const findAll = () => simulateAsyncOperation(() => {
-  return associadosDB;
+// Lista todos
+const buscarTodos = () => simularOperacaoAssincrona(() => {
+  return associadosBD;
 });
 
-// Busca associado por CPF
-const findByCpf = (cpf) => simulateAsyncOperation(() => {
-  return associadosDB.find(a => a.cpf_associado === cpf);
+// Busca por CPF
+const buscarPorCpf = (cpf) => simularOperacaoAssincrona(() => {
+  return associadosBD.find(a => a.cpf_associado === cpf);
 });
 
-// Atualiza um associado por CPF
-const update = (cpf, dadosAtualizados) => simulateAsyncOperation(() => {
-  const index = associadosDB.findIndex(a => a.cpf_associado === cpf);
-  if (index === -1) {
+// Atualiza por CPF
+const atualizar = (cpf, dadosAtualizados) => simularOperacaoAssincrona(() => {
+  const indice = associadosBD.findIndex(a => a.cpf_associado === cpf);
+  if (indice === -1) {
     return null; // Não encontrado
   }
-  // Mantém o CPF original
-  associadosDB[index] = { ...associadosDB[index], ...dadosAtualizados, cpf_associado: cpf };
-  return associadosDB[index];
+  // Mantém o CPF original ao atualizar
+  associadosBD[indice] = { ...associadosBD[indice], ...dadosAtualizados, cpf_associado: cpf };
+  return associadosBD[indice];
 });
 
-// Deleta um associado por CPF
-const remove = (cpf) => simulateAsyncOperation(() => {
-  const index = associadosDB.findIndex(a => a.cpf_associado === cpf);
-  if (index === -1) {
+// Deleta por CPF
+const remover = (cpf) => simularOperacaoAssincrona(() => {
+  const indice = associadosBD.findIndex(a => a.cpf_associado === cpf);
+  if (indice === -1) {
     return false; // Não encontrado
   }
-  associadosDB.splice(index, 1);
-  return true; // Deletado com sucesso
+  associadosBD.splice(indice, 1);
+  return true; // Sucesso
 });
 
 module.exports = {
-  create,
-  findAll,
-  findByCpf,
-  update,
-  remove,
+  criar,
+  buscarTodos,
+  buscarPorCpf,
+  atualizar,
+  remover,
 };
