@@ -1,6 +1,7 @@
-// src/controllers/associado.controller.js
+// src/controllers/associados.controllers.js
 
-const associadoService = require('../services/associado.service');
+// 💡 CORREÇÃO AQUI: Importa o Service com o nome correto: 'associados.services'
+const associadoService = require('../service/associados.services');
 
 // Função auxiliar para tratamento de erros
 const handleError = (res, error, defaultMessage, defaultStatus = 400) => {

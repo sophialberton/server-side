@@ -1,5 +1,6 @@
-// src/services/associado.service.js
+// src/service/associados.services.js
 
+// 💡 CORREÇÃO AQUI: Importa o Data com o nome correto: 'associado.data'
 const associadoData = require('../data/associado.data');
 
 // --- Funções de Validação ---
