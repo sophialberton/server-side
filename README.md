@@ -2,13 +2,28 @@
 
 Esta é uma API RESTful desenvolvida em Node.js e Express para gerenciar o cadastro de associados de um clube, focada em demonstrar a implementação de operações CRUD (Create, Read, Update, Delete), assincronismo e uma arquitetura organizada em camadas (Data, Service, Controller).
 
-O "banco de dados" é uma simulação em memória, com funções que utilizam `Promise` para simular I/O assíncrono e garantir a aplicação correta de `async/await` em toda a aplicação.
+O banco de dados agora utiliza o **MariaDB** (ou MySQL) através do módulo `mariadb`, com uma estrutura de conexão via *pool* para gerenciar o acesso real aos dados.
 
 ## 🚀 Como Executar
 
 ### Pré-requisitos
 * [Node.js](https://nodejs.org/) (Versão recomendada: 18 ou superior)
 * [npm](https://www.npmjs.com/) (Instalado com o Node.js)
+* **Servidor MariaDB ou MySQL** rodando (Necessário para o banco de dados)
+
+### 🔑 Configuração do Banco de Dados
+
+Antes de iniciar a API, você deve garantir a configuração do MariaDB/MySQL:
+
+1.  **Crie o Banco de Dados Principal:**
+    Acesse o console do seu MariaDB/MySQL (ex: `mysql -u root -p`) e execute o comando:
+    ```sql
+    CREATE DATABASE IF NOT EXISTS clube_associados;
+    ```
+    *(O código da API criará a tabela `associados` automaticamente, mas o banco de dados principal deve existir).*
+
+2.  **Configure as Credenciais (Obrigatório):**
+    O arquivo `src/data/db.js` usa as credenciais: `host: '127.0.0.1'`, `user: 'root'`, e a `password` configurada no arquivo. **Você DEVE** ajustar a senha no arquivo `src/data/db.js` para corresponder à senha do seu usuário do banco de dados para que a conexão seja estabelecida.
 
 ### Passos de Instalação
 
@@ -141,10 +156,14 @@ O projeto segue o **padrão de Camadas Modulares**, garantindo a separação de 
 - **`src/app.js`**  
   Configura o Express, adiciona middlewares (como `body-parser`), importa as rotas e define o middleware de tratamento de erro genérico.
 
-- **`src/data/associado.data.js`** *(Camada de Dados)*  
-  - Simula o banco de dados em memória (`associadosDB`).  
-  - Contém funções CRUD de baixo nível que simulam operações assíncronas de I/O (`simulateAsyncOperation`).
+- **`src/data/db.js`** *(Camada de Conexão)* **[NOVO]**
+  - Configura e exporta o pool de conexões do MariaDB.
+  - Inclui a função `initDatabase` para criar a tabela `associados` se ela ainda não existir.
 
+- **`src/data/associado.data.js`** *(Camada de Dados)*
+  - Implementa as operações CRUD utilizando o pool de conexões do MariaDB (SQL).
+  - É responsável pela interação direta e assíncrona com o banco de dados real.
+  
 - **`src/service/associados.services.js`** *(Camada de Serviço / Negócio)*  
   - Implementa a lógica de negócio, como validação dos dados do associado (`validateAssociado`).  
   - Trata exceções específicas (ex: “Associado não encontrado”, com status `404`).  
