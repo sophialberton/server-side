@@ -33,7 +33,7 @@ npm start
 Para iniciar o menu Cliente:
 
 ```bash
-npm nome menu_cli.js
+node menu_cli.js
 ```
 
 # 🚀 Servidor e URL Base
