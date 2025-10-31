@@ -30,6 +30,12 @@ npm start
 # npm run dev
 ```
 
+Para iniciar o menu Cliente:
+
+```bash
+npm nome menu_cli.js
+```
+
 # 🚀 Servidor e URL Base
 
 O servidor será iniciado na **porta 3000**.  
